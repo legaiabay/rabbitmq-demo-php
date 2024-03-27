@@ -10,14 +10,14 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/..");
 $dotenv->load();
 
 class RabbitMQ {
-	
+
 	public $connection;
     public $channel;
     public $callback_queue;
     public $response;
     public $corr_id;
 
-    public function __construct($is_consumer = false){
+    public function __construct($is_sender = false){
 
  		// set rabbitmq connection
 		$this->connection = new AMQPStreamConnection(
@@ -41,7 +41,7 @@ class RabbitMQ {
 		$this->channel = $this->connection->channel();
 
 		// if not a consumer, then set callback queue
-		if(!$is_consumer){
+		if($is_sender){
 
 			// set callback queue for getting response
 			$this->callback_queue = null;

@@ -9,7 +9,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class GeneratePDF extends RabbitMQ {
 
 	public function __construct() {
-        parent::__construct();
+        parent::__construct(true);
     }
 
  	// request generate pdf
