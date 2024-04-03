@@ -1,5 +1,5 @@
 <?php
-	include_once("sender.php");
+	include_once("producer.php");
 
 	$repeat = 10;
 	for($i=0; $i<$repeat; $i++){

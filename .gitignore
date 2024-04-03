@@ -3,3 +3,6 @@
 /public/pdf/report*
 
 .env
+
+.DS_Store
+*/.DS_Store

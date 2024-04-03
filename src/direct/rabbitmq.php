@@ -1,12 +1,12 @@
 <?php
 
-require_once '../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 // load .env
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/..");
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../..");
 $dotenv->load();
 
 class RabbitMQ {
@@ -17,12 +17,12 @@ class RabbitMQ {
     public $response;
     public $corr_id;
 
-    public function __construct($is_sender = false){
+    public function __construct($is_producer = false){
 
  		// set rabbitmq connection
 		$this->connection = new AMQPStreamConnection(
 			$_ENV['RABBITMQ_HOST'],
-			$_ENV['RABBITMQ_PORT'],
+			$_ENV['RABBITMQ_PORT'], // default : 5672
 			$_ENV['RABBITMQ_USER'],
 			$_ENV['RABBITMQ_PASS'],
 			$_ENV['RABBITMQ_VHOST'],
@@ -34,25 +34,26 @@ class RabbitMQ {
 			120, // read write timeout
 			null, // context
 			false, // keep alive
-			60 // heartbeat
+			60 // heartbeat / healthcheck
 		);
 
 		// set channel
 		$this->channel = $this->connection->channel();
 
 		// if not a consumer, then set callback queue
-		if($is_sender){
+		if($is_producer){
 
 			// set callback queue for getting response
 			$this->callback_queue = null;
 			list($this->callback_queue, ,) = $this->channel->queue_declare(
-			    "",
+			    "", // queue name
 			    false,
 			    false,
 			    true,
 			    false
 			);
 
+			// consumer
 			$this->channel->basic_consume(
 			    $this->callback_queue,
 			    '',

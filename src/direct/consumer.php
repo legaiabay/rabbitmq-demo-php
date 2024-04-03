@@ -1,6 +1,6 @@
 <?php
 
-require_once '../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 require_once 'rabbitmq.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -40,7 +40,7 @@ class GeneratePDFConsumer extends RabbitMQ{
             $data = json_decode($payload, true);
 
             // for testing
-            // sleep(4);
+            sleep(60);
 
             // do anything here
             $this->generate_pdf();
@@ -83,8 +83,8 @@ class GeneratePDFConsumer extends RabbitMQ{
             echo "response sent! \n";
         };
 
-        // message consume limit
-        $this->channel->basic_qos(null, 20, null);
+        // message consume limit / prefetch
+        $this->channel->basic_qos(null, 2, null);
 
         // consume and process message requests
         $this->channel->basic_consume('queue_generate_pdf', '', false, false, false, false, $callback);
